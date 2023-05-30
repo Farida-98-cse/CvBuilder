@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 
 from .api import api
-
+from app.controller import router as user_router
+api.add_router('/users/', user_router)
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", api.urls),
