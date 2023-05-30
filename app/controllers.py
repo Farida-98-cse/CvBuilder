@@ -26,7 +26,7 @@ class UserController:
         )
 
 
-@api_controller("/auth", tags=["auth"],  auth=JWTAuth())
+@api_controller("/auth", tags=["auth"], auth=JWTAuth())
 class UserTokenController(TokenObtainSlidingController):
     auto_import = True
 
@@ -39,12 +39,12 @@ class UserTokenController(TokenObtainSlidingController):
             token=str(token),
             token_exp_date=datetime.utcfromtimestamp(token["exp"]),
         )
-
-    @route.post(
-        "/api-token-refresh",
-        # response=schema.TokenRefreshSlidingSerializer,
-        url_name="refresh",
-    )
-    def refresh_token(self, refresh_token: schema.TokenRefreshSlidingSchema):
-        refresh = schema.TokenRefreshSlidingSerializer(**refresh_token.dict())
-        return refresh
+    # TODO Add refresh token
+    # @route.post(
+    #     "/api-token-refresh",
+    #     response=schema.TokenRefreshSlidingSerializer,
+    #     url_name="refresh",
+    # )
+    # def refresh_token(self, refresh_token: schema.TokenRefreshSlidingSchema):
+    #     refresh = schema.TokenRefreshSlidingSerializer(**refresh_token.dict())
+    #     return refresh
