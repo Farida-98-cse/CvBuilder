@@ -6,7 +6,6 @@ from django.contrib.auth.models import AbstractUser, Group
 from ninja_extra import status
 from ninja_extra.exceptions import APIException
 from ninja_schema import ModelSchema, Schema, model_validator
-from pydantic import validator
 
 UserModel = get_user_model()
 
