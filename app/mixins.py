@@ -2,7 +2,7 @@ from typing import Any
 
 from django.db.models import QuerySet
 
-from app.models import CV, Education
+from app.models import CV, Education, Skill, WorkExperience
 
 
 class CvViewMixin:
@@ -22,4 +22,14 @@ class EducationViewMixin:
 
 
 class SkillViewMixin:
-    pass
+    request: Any
+
+    def get_queryset(self, skill_id) -> QuerySet:
+        return Skill.objects.filter(id=skill_id)
+
+
+class WorkViewMixin:
+    request: Any
+
+    def get_queryset(self, work_id) -> QuerySet:
+        return WorkExperience.objects.filter(id=work_id)

@@ -6,11 +6,12 @@ from ninja_jwt import schema
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
-from app.mixins import CvViewMixin, EducationViewMixin, SkillViewMixin
+from app.mixins import CvViewMixin, EducationViewMixin, SkillViewMixin, WorkViewMixin
 from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema, get_cv
 from app.schemas.education import EducationSchema, EducationRetrieveSchema, EducationUpdateSchema
 from app.schemas.skill import SkillSchema
 from app.schemas.user import *
+from app.schemas.work_experience import WorkSchema
 
 User = get_user_model()
 
@@ -160,6 +161,33 @@ class SkillController(SkillViewMixin):
             error_message="Education with id {} does not exist".format(skill_id),
         )
         skill.delete()
+        return self.create_response(
+            "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
+        )
+
+
+@api_controller("/work-experience", tags=["experience"], auth=JWTAuth(), permissions=[IsAuthenticated])
+class WorkController(WorkViewMixin):
+
+    @route.post("/create-work-experience", url_name="Define work experiences", response=WorkSchema)
+    def create_work(self, work: WorkSchema):
+        try:
+            cv = get_cv(user_id=self.context.request.user.id)
+            work = work.create_work_experience(cv_id=cv.id)
+            return WorkSchema(company_name=work.company_name, job_title=work.job_title, start_date=work.start_date,
+                              end_date=work.end_date, description=work.description, id=work.id)
+        except Exception as ex:
+            raise ex
+
+    @route.delete(
+        "/{int:work_id}", url_name="destroy"
+    )
+    def delete_work(self, work_id: int):
+        work = self.get_object_or_exception(
+            self.get_queryset(work_id=work_id),
+            error_message="work experience with id {} does not exist".format(work_id),
+        )
+        work.delete()
         return self.create_response(
             "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
         )
