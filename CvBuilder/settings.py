@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import json
 from pathlib import Path
-
+import datetime
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -116,7 +116,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+    "api_version": "0.1",
+    "SECURITY_DEFINITIONS": {
+        "api_key": {"type": "apiKey", "name": "Authorization", "in": "header"},
+    },
+}
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
+NINJA_JWT = {
+    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.SlidingToken",),
+    "SLIDING_TOKEN_LIFETIME": datetime.timedelta(hours=5),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": datetime.timedelta(days=1),
+}
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
