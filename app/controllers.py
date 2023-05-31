@@ -78,3 +78,17 @@ class CvControllers(CvViewMixin):
         cv = self.get_object_or_exception(self.get_queryset(), id__exact=cv_id)
         cv_schema.update_cv(user_id=self.context.request.user.id)
         return cv_schema.dict()
+
+    @route.delete(
+        "/{int:cv_id}", url_name="destroy"
+    )
+    def delete_store(self, cv_id: int):
+        cv = self.get_object_or_exception(
+            self.get_queryset(),
+            id=cv_id,
+            error_message="Store with id {} does not exist".format(cv_id),
+        )
+        cv.delete()
+        return self.create_response(
+            "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
+        )
