@@ -1,15 +1,14 @@
-from datetime import datetime
-from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 
-from ninja_extra import api_controller, route, status
+from ninja_extra import api_controller, route
 from ninja_extra.permissions import IsAuthenticated
 from ninja_jwt import schema
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
-from app.mixins import CvViewMixin
-from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema
+from app.mixins import CvViewMixin, EducationViewMixin
+from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema, get_cv
+from app.schemas.education import EducationSchema
 from app.schemas.user import *
 
 User = get_user_model()
@@ -68,6 +67,11 @@ class CvControllers(CvViewMixin):
         except Exception as ex:
             raise ex
 
+    @route.get("/{int:cv_id}", response=CvRetrieveSchema, url_name="get-cv-detail")
+    def retrieve_cv(self, cv_id: str):
+        cv = CvRetrieveSchema.get_cv(cv_id)
+        return cv
+
     @route.generic(
         "/{int:cv_id}",
         methods=["PUT"],
@@ -82,13 +86,27 @@ class CvControllers(CvViewMixin):
     @route.delete(
         "/{int:cv_id}", url_name="destroy"
     )
-    def delete_store(self, cv_id: int):
+    def delete_cv(self, cv_id: int):
         cv = self.get_object_or_exception(
             self.get_queryset(),
             id=cv_id,
-            error_message="Store with id {} does not exist".format(cv_id),
+            error_message="Cv with id {} does not exist".format(cv_id),
         )
         cv.delete()
         return self.create_response(
             "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
         )
+
+
+@api_controller("/education", tags=["education"], auth=JWTAuth(), permissions=[IsAuthenticated])
+class EducationController(EducationViewMixin):
+    @route.post("/create-education", response=EducationSchema, url_name="Define Education history")
+    def create_education_program(self, education: EducationSchema):
+        try:
+            cv = get_cv(user_id=self.context.request.user.id)
+            education = education.create_education(cv_id=cv.id)
+            return EducationSchema(institution_name=education.institution_name, degree=education.degree,
+                                   start_date=education.start_date, end_date=education.end_date,
+                                   description=education.description)
+        except Exception as ex:
+            raise ex

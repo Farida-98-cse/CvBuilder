@@ -41,3 +41,7 @@ class CvRetrieveSchema(ModelSchema):
     class Config:
         model = CV
         model_fields = ["title", "professional_summary"]
+
+
+def get_cv(user_id: int):
+    return CV.objects.filter(user_id=user_id).first()
