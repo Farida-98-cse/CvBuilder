@@ -77,4 +77,4 @@ class CvControllers(CvViewMixin):
     def update_cv(self, cv_id: int, cv_schema: CvUpdateSchema):
         cv = self.get_object_or_exception(self.get_queryset(), id__exact=cv_id)
         cv_schema.update_cv(user_id=self.context.request.user.id)
-        return cv
+        return cv_schema.dict()
