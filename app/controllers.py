@@ -6,7 +6,7 @@ from ninja_jwt import schema
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
-from app.mixins import CvViewMixin, EducationViewMixin, SkillViewMixin, WorkViewMixin
+from app.mixins import CvViewMixin, EducationViewMixin, SkillViewMixin, WorkViewMixin, ShowCvControllerMixin
 from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema, get_cv
 from app.schemas.education import EducationSchema, EducationRetrieveSchema, EducationUpdateSchema
 from app.schemas.skill import SkillSchema
@@ -202,3 +202,12 @@ class WorkController(WorkViewMixin):
         return self.create_response(
             "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
         )
+
+
+@api_controller("/show-cv", tags=["show-cv"], auth=JWTAuth(), permissions=[IsAuthenticated])
+class ShowCvController(ShowCvControllerMixin):
+
+    @route.get("/{int:user_id}", response=CvRetrieveSchema, url_name="show-cv")
+    def show_cv(self, user_id: int):
+        cv = self.get_object_or_exception(
+            self.get_queryset(cv_id=user_id))
