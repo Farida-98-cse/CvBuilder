@@ -11,7 +11,7 @@ from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema, ge
 from app.schemas.education import EducationSchema, EducationRetrieveSchema, EducationUpdateSchema
 from app.schemas.skill import SkillSchema
 from app.schemas.user import *
-from app.schemas.work_experience import WorkSchema
+from app.schemas.work_experience import WorkSchema, WorkRetrieveSchema, WorkUpdateSchema
 
 User = get_user_model()
 
@@ -178,6 +178,17 @@ class WorkController(WorkViewMixin):
                               end_date=work.end_date, description=work.description, id=work.id)
         except Exception as ex:
             raise ex
+
+    @route.generic(
+        "/{int:work_id}",
+        methods=["PUT"],
+        response=WorkRetrieveSchema,
+        url_name="update",
+    )
+    def update_work_experience(self, work_id: int, work_schema: WorkUpdateSchema):
+        work = self.get_object_or_exception(self.get_queryset(work_id=work_id), id__exact=work_id)
+        work_schema.update_work_experience(id=work_id)
+        return work_schema.dict()
 
     @route.delete(
         "/{int:work_id}", url_name="destroy"
