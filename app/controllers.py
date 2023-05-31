@@ -8,10 +8,8 @@ from ninja_jwt import schema
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
-
-from app.crud.cv import cv_crud
 from app.mixins import CvViewMixin
-from app.schemas.cv import PrimaryCvSchema
+from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema
 from app.schemas.user import *
 
 User = get_user_model()
@@ -45,15 +43,15 @@ class UserTokenController(TokenObtainSlidingController):
             token=str(token),
             token_exp_date=datetime.utcfromtimestamp(token["exp"]),
         )
-    # TODO Add refresh token
-    # @route.post(
-    #     "/api-token-refresh",
-    #     response=schema.TokenRefreshSlidingSerializer,
-    #     url_name="refresh",
-    # )
-    # def refresh_token(self, refresh_token: schema.TokenRefreshSlidingSchema):
-    #     refresh = schema.TokenRefreshSlidingSerializer(**refresh_token.dict())
-    #     return refresh
+
+    @route.post(
+        "/api-token-refresh",
+        response=schema.TokenRefreshSlidingSerializer,
+        url_name="refresh",
+    )
+    def refresh_token(self, refresh_token: schema.TokenRefreshSlidingSchema):
+        refresh = schema.TokenRefreshSlidingSerializer(**refresh_token.dict())
+        return refresh
 
 
 # Cv controllers
@@ -63,10 +61,20 @@ class CvControllers(CvViewMixin):
     @route.post("/create", response=PrimaryCvSchema, url_name="Create CV")
     def create_cv(self, cv: PrimaryCvSchema):
         try:
-            data = cv.dict()
-            cv = cv_crud.create(data)
-            return JsonResponse({
-                'your cv': data
-            })
+            cv = cv.create_cv(user_id=self.context.request.user.id)
+            return JsonResponse(
+                {"bio": cv.professional_summary, "title": cv.title}
+            )
         except Exception as ex:
             raise ex
+
+    @route.generic(
+        "/{int:cv_id}",
+        methods=["PUT"],
+        response=CvRetrieveSchema,
+        url_name="update",
+    )
+    def update_cv(self, cv_id: int, cv_schema: CvUpdateSchema):
+        cv = self.get_object_or_exception(self.get_queryset(), id__exact=cv_id)
+        cv_schema.update_cv(user_id=self.context.request.user.id)
+        return cv

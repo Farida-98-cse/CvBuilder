@@ -9,4 +9,4 @@ class CvViewMixin:
     request: Any
 
     def get_queryset(self) -> QuerySet:
-        return CV.objects.filter(owner_id=self.context.request.user)
+        return CV.objects.filter(user_id=self.context.request.user.id)
