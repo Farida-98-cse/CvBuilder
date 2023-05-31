@@ -1,11 +1,17 @@
 from datetime import datetime
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 
 from ninja_extra import api_controller, route, status
+from ninja_extra.permissions import IsAuthenticated
 from ninja_jwt import schema
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
+
+from app.crud.cv import cv_crud
+from app.mixins import CvViewMixin
+from app.schemas.cv import PrimaryCvSchema
 from app.schemas.user import *
 
 User = get_user_model()
@@ -48,3 +54,19 @@ class UserTokenController(TokenObtainSlidingController):
     # def refresh_token(self, refresh_token: schema.TokenRefreshSlidingSchema):
     #     refresh = schema.TokenRefreshSlidingSerializer(**refresh_token.dict())
     #     return refresh
+
+
+# Cv controllers
+
+@api_controller("/cv", tags=["cv"], auth=JWTAuth(), permissions=[IsAuthenticated])
+class CvControllers(CvViewMixin):
+    @route.post("/create", response=PrimaryCvSchema, url_name="Create CV")
+    def create_cv(self, cv: PrimaryCvSchema):
+        try:
+            data = cv.dict()
+            cv = cv_crud.create(data)
+            return JsonResponse({
+                'your cv': data
+            })
+        except Exception as ex:
+            raise ex
