@@ -15,5 +15,7 @@ class CvViewMixin:
 class EducationViewMixin:
     request: Any
 
-    def get_queryset(self) -> QuerySet:
-        return Education.objects.filter(cv_id=self.context.request.cv.id)
+    # def get_education(self):
+    #     return Education.objects.filter(cv_id=self.context.request.cv_id).first()
+    def get_queryset(self, education_id) -> QuerySet:
+        return Education.objects.filter(id=education_id)

@@ -8,7 +8,7 @@ from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
 from app.mixins import CvViewMixin, EducationViewMixin
 from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema, get_cv
-from app.schemas.education import EducationSchema
+from app.schemas.education import EducationSchema, EducationRetrieveSchema, EducationUpdateSchema
 from app.schemas.user import *
 
 User = get_user_model()
@@ -110,3 +110,14 @@ class EducationController(EducationViewMixin):
                                    description=education.description)
         except Exception as ex:
             raise ex
+
+    @route.generic(
+        "/{int:education_id}",
+        methods=["PUT"],
+        response=EducationRetrieveSchema,
+        url_name="update",
+    )
+    def update_cv(self, education_id: int, education_schema: EducationUpdateSchema):
+        education = self.get_object_or_exception(self.get_queryset(education_id=education_id), id__exact=education_id)
+        education_schema.update_education(id=education_id)
+        return education_schema.dict()
