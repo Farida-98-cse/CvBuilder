@@ -40,4 +40,4 @@ class CvUpdateSchema(ModelSchema):
 class CvRetrieveSchema(ModelSchema):
     class Config:
         model = CV
-        model_fields = ["title", "professional_summary", "id"]
+        model_fields = ["title", "professional_summary"]
