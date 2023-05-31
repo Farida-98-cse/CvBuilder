@@ -6,9 +6,10 @@ from ninja_jwt import schema
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController
 from ninja_jwt.tokens import SlidingToken
-from app.mixins import CvViewMixin, EducationViewMixin
+from app.mixins import CvViewMixin, EducationViewMixin, SkillViewMixin
 from app.schemas.cv import PrimaryCvSchema, CvUpdateSchema, CvRetrieveSchema, get_cv
 from app.schemas.education import EducationSchema, EducationRetrieveSchema, EducationUpdateSchema
+from app.schemas.skill import SkillSchema
 from app.schemas.user import *
 
 User = get_user_model()
@@ -134,3 +135,16 @@ class EducationController(EducationViewMixin):
         return self.create_response(
             "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
         )
+
+
+@api_controller("/skills", tags=["skill"], auth=JWTAuth(), permissions=[IsAuthenticated])
+class SkillController(SkillViewMixin):
+
+    @route.post("/create-skill", response=SkillSchema, url_name="Define skills")
+    def create_skill(self, skill: SkillSchema):
+        try:
+            cv = get_cv(user_id=self.context.request.user.id)
+            skill = skill.create_skill(cv_id=cv.id)
+            return SkillSchema()
+        except Exception as ex:
+            raise ex
