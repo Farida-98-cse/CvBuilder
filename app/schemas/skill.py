@@ -1,7 +1,7 @@
 from typing import Any
 
 from django.db import transaction
-from ninja import ModelSchema
+from ninja_schema import ModelSchema
 
 from app.models import Skill
 
@@ -9,7 +9,7 @@ from app.models import Skill
 class SkillSchema(ModelSchema):
     class Config:
         model = Skill
-        model_fields = ("name", "id")
+        include = ("name",)
 
     @transaction.atomic
     def create_skill(self, **kwargs: Any):
@@ -23,7 +23,6 @@ class SkillUpdateSchema(ModelSchema):
         model = Skill
         model_fields = (
             "name",
-            "id"
         )
 
     @transaction.atomic
