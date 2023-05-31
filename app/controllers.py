@@ -121,3 +121,16 @@ class EducationController(EducationViewMixin):
         education = self.get_object_or_exception(self.get_queryset(education_id=education_id), id__exact=education_id)
         education_schema.update_education(id=education_id)
         return education_schema.dict()
+
+    @route.delete(
+        "/{int:education_id}", url_name="destroy"
+    )
+    def delete_education(self, education_id: int):
+        education = self.get_object_or_exception(
+            self.get_queryset(education_id=education_id),
+            error_message="Education with id {} does not exist".format(education_id),
+        )
+        education.delete()
+        return self.create_response(
+            "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
+        )
