@@ -13,3 +13,6 @@ class PasswordNotValidException(APIException):
     default_detail = "The password that you entered is not valid.Please use stronger password."
 
 
+class UsernameExistsException(APIException):
+    default_detail = "Username already exist"
+    
