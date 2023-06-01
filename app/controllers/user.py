@@ -9,6 +9,8 @@ from app.schemas.user import (
     UserTokenOutSchema,
     CreateUserSchema,
 )
+from app.utils.validate_password import validate_password
+from app.utils.custom_exceptions import PasswordNotValidException
 
 User = get_user_model()
 
@@ -19,13 +21,16 @@ class UserController:
         "/create", response={201: UserTokenOutSchema}, url_name="user-create", auth=None
     )
     def create_user(self, user_schema: CreateUserSchema):
-        user = user_schema.create()
-        token = SlidingToken.for_user(user)
-        return UserTokenOutSchema(
-            user=user,
-            token=str(token),
-            token_exp_date=datetime.utcfromtimestamp(token["exp"]),
-        )
+        if not validate_password(user_schema.password):
+            raise PasswordNotValidException
+        else:
+            user = user_schema.create()
+            token = SlidingToken.for_user(user)
+            return UserTokenOutSchema(
+                user=user,
+                token=str(token),
+                token_exp_date=datetime.utcfromtimestamp(token["exp"]),
+            )
 
 
 @api_controller("/auth", tags=["auth"], auth=JWTAuth())
