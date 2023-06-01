@@ -16,7 +16,7 @@ class SkillController(SkillViewMixin):
     def create_skill(self, skill: SkillSchema):
         cv = CvRetrieveSchema.get_cv(user_id=self.context.request.user.id)
         if not cv:
-             raise ModelNotFoundException
+            raise ModelNotFoundException
         skill = skill.create_skill(cv_id=cv.id)
         # TODO Add output schema
         return JsonResponse({
