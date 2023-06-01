@@ -31,7 +31,7 @@ To run the CV Builder locally, follow these steps:
 ## API Documentation
 
 The CV Builder project exposes a set of API endpoints using Django-Ninja.
-For detailed API documentation, please refer to the [API Documentation](http://127.0.0.1/api/docs).
+For detailed API documentation, please refer to the [API Documentation](http://127.0.0.1:8000/api/docs).
 
 The API documentation includes information on the available endpoints, request formats, response formats, and authentication requirements. It also provides example requests and responses for each endpoint.
 
