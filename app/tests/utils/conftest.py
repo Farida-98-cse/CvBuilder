@@ -29,3 +29,11 @@ def random_id(n):
 @pytest.fixture
 def user():
     return UserFactory()
+
+
+@pytest.fixture
+def app_admin():
+    user = UserFactory(
+        is_superuser=True, is_staff=True, username="admin", email="admin@dmin.com"
+    )
+    return user

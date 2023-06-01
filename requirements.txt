@@ -32,3 +32,4 @@ pycparser~=2.21
 setuptools~=67.6.0
 injector~=0.20.1
 contextlib2~=21.6.0
+factory-boy==2.12.0
