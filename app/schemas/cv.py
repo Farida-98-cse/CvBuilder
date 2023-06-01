@@ -1,7 +1,8 @@
+from datetime import datetime
 from typing import Any
 
 from django.db import transaction
-from ninja import ModelSchema
+from ninja import ModelSchema, Schema
 
 from app.models import CV
 
@@ -38,9 +39,48 @@ class CvUpdateSchema(ModelSchema):
 
 
 class CvRetrieveSchema(ModelSchema):
+    professional_summary: str = None
+
     class Config:
         model = CV
         model_fields = ["title", "professional_summary"]
 
     def get_cv(user_id: int):
         return CV.objects.filter(user_id=user_id).first()
+
+
+class UserSchema:
+    user_name: str
+    email: str
+
+
+class WorkExpSchema:
+    company_name: str = None
+    job_title: str = None
+    start_date: datetime = None
+    end_date: datetime = None
+    description: str = None
+
+
+class EducationOutSchema:
+    institution_name: str = None
+    degree: str = None
+    start_date: datetime = None
+    end_date: datetime = None
+    description: str = None
+
+
+class SkillOutSchema:
+    name: str
+
+
+class CvDraftSchema(Schema):
+    user: UserSchema = None
+    title: str = None
+    professional_summary: str = None
+    work_experience: WorkExpSchema = None
+    education: EducationOutSchema = None
+    skills: SkillOutSchema = None
+
+    class Config:
+        arbitrary_types_allowed = True

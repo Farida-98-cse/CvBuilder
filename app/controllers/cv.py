@@ -4,7 +4,8 @@ from ninja_extra.permissions import IsAuthenticated
 from ninja_jwt.authentication import JWTAuth
 
 from app.mixins import CvViewMixin, ShowCvControllerMixin
-from app.schemas.cv import PrimaryCvSchema, CvRetrieveSchema, CvUpdateSchema
+from app.schemas.cv import PrimaryCvSchema, CvRetrieveSchema, CvUpdateSchema, CvDraftSchema
+from app.services.cv_service import build_cv_data
 
 
 @api_controller("/cv", tags=["cv"], auth=JWTAuth(), permissions=[IsAuthenticated])
@@ -50,10 +51,10 @@ class CvController(CvViewMixin, ShowCvControllerMixin):
             "Item Deleted", status_code=status.HTTP_204_NO_CONTENT
         )
 
-    @route.get("final-cv/{int:user_id}", response=CvRetrieveSchema, url_name="show-cv")
+    @route.get("final-cv/{int:user_id}", response=CvDraftSchema, url_name="show-cv")
     def show_cv(self, user_id: int):
         cv = self.get_object_or_exception(
             self.get_cv_queryset(user_id=user_id))
-        print(cv)
-        return cv.title
+        response = build_cv_data(cv)
+        return response
 
