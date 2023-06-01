@@ -13,14 +13,8 @@ from app.utils.custom_exceptions import ModelNotFoundException
 class CvController(CvViewMixin, ShowCvControllerMixin):
     @route.post("/create", response=PrimaryCvSchema, url_name="Create CV")
     def create_cv(self, cv: PrimaryCvSchema):
-        try:
             cv = cv.create_cv(user_id=self.context.request.user.id)
-            # TODO Add output schema
-            return JsonResponse(
-                {"bio": cv.professional_summary, "title": cv.title}
-            )
-        except Exception as ex:
-            raise ex
+            return PrimaryCvSchema(title=cv.title, professional_summary=cv.professional_summary)
 
     @route.get("/{int:user_id}", response=CvRetrieveSchema, url_name="get-cv-detail")
     def retrieve_cv(self, user_id: int):
