@@ -6,7 +6,7 @@ from ninja_jwt.authentication import JWTAuth
 from app.mixins import CvViewMixin, ShowCvControllerMixin
 from app.schemas.cv import PrimaryCvSchema, CvRetrieveSchema, CvUpdateSchema, CvDraftSchema
 from app.services.cv_service import build_cv_data
-from app.utils.custom_exceptions import ModelNotFoundException
+from app.utils.custom_exceptions import ObjectNotFoundException
 
 
 @api_controller("/cv", tags=["cv"], auth=JWTAuth(), permissions=[IsAuthenticated])

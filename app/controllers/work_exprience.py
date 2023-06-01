@@ -5,7 +5,7 @@ from ninja_jwt.authentication import JWTAuth
 from app.mixins import WorkViewMixin
 from app.schemas.cv import CvRetrieveSchema
 from app.schemas.work_experience import WorkSchema, WorkRetrieveSchema, WorkUpdateSchema
-from app.utils.custom_exceptions import ModelNotFoundException
+from app.utils.custom_exceptions import ObjectNotFoundException
 
 
 @api_controller("/work-experience", tags=["experience"], auth=JWTAuth(), permissions=[IsAuthenticated])
@@ -15,7 +15,7 @@ class WorkController(WorkViewMixin):
     def create_work(self, work: WorkSchema):
         cv = CvRetrieveSchema.get_cv(user_id=self.context.request.user.id)
         if not cv:
-            raise ModelNotFoundException
+            raise ObjectNotFoundException
         work = work.create_work_experience(cv_id=cv.id)
         return WorkSchema(company_name=work.company_name, job_title=work.job_title, start_date=work.start_date,
                           end_date=work.end_date, description=work.description, id=work.id)
@@ -29,7 +29,7 @@ class WorkController(WorkViewMixin):
     def update_work_experience(self, work_id: int, work_schema: WorkUpdateSchema):
         work = self.get_object_or_exception(self.get_queryset(work_id=work_id), id__exact=work_id)
         if not work:
-            raise ModelNotFoundException
+            raise ObjectNotFoundException
         work_schema.update_work_experience(id=work_id)
         return work_schema.dict()
 
