@@ -2,6 +2,7 @@ from typing import Any
 
 from django.db.models import QuerySet
 
+from app.controllers.user import User
 from app.models import CV, Education, Skill, WorkExperience
 
 
@@ -33,3 +34,11 @@ class WorkViewMixin:
 
     def get_queryset(self, work_id) -> QuerySet:
         return WorkExperience.objects.filter(id=work_id)
+
+
+class ShowCvControllerMixin:
+    def get_cv_queryset(self, user_id) -> QuerySet:
+        cv = CV.objects.select_related('user'). \
+            prefetch_related('workexperience_set', 'education_set',
+                             'skill_set')
+        return cv
