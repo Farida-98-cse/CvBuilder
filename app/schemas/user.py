@@ -4,9 +4,8 @@ from typing import List, Optional, Type
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, Group
 from ninja_extra import status
-from ninja_extra.exceptions import APIException
 from ninja_schema import ModelSchema, Schema, model_validator
-
+from app.utils.custom_exceptions import UsernameExistsException
 UserModel = get_user_model()
 
 
@@ -32,9 +31,7 @@ class CreateUserSchema(ModelSchema):
     @model_validator("username")
     def unique_name(cls, value_data):
         if UserModel.objects.filter(username__icontains=value_data).exists():
-            raise APIException(
-                "Username already exist", status_code=status.HTTP_400_BAD_REQUEST
-            )
+            raise UsernameExistsException
         return value_data
 
     def create(self) -> Type[AbstractUser]:

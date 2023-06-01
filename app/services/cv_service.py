@@ -1,4 +1,8 @@
-def build_cv_data(cv):
+from app.models import CV
+from typing import Dict
+
+
+def build_cv_data(cv: CV) -> Dict:
     cv_data = dict(user=dict(username=cv.user.username, email=cv.user.email),
                    title=cv.title, professional_summary=cv.professional_summary, work_experience=[
             dict(company_name=experience.company_name, job_title=experience.job_title,

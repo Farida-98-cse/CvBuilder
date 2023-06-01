@@ -5,7 +5,7 @@ from ninja_jwt.authentication import JWTAuth
 from app.mixins import EducationViewMixin
 from app.schemas.cv import CvRetrieveSchema
 from app.schemas.education import EducationSchema, EducationRetrieveSchema, EducationUpdateSchema
-from app.utils.custom_exceptions import ModelNotFoundException
+from app.utils.custom_exceptions import ObjectNotFoundException
 
 
 @api_controller("/education", tags=["education"], auth=JWTAuth(), permissions=[IsAuthenticated])
@@ -27,7 +27,7 @@ class EducationController(EducationViewMixin):
     def update_cv(self, education_id: int, education_schema: EducationUpdateSchema):
         education = self.get_object_or_exception(self.get_queryset(education_id=education_id), id__exact=education_id)
         if not education:
-            raise ModelNotFoundException
+            raise ObjectNotFoundException
         education_schema.update_education(id=education_id)
         return education_schema.dict()
 

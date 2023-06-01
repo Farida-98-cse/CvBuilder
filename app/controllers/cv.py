@@ -6,21 +6,15 @@ from ninja_jwt.authentication import JWTAuth
 from app.mixins import CvViewMixin, ShowCvControllerMixin
 from app.schemas.cv import PrimaryCvSchema, CvRetrieveSchema, CvUpdateSchema, CvDraftSchema
 from app.services.cv_service import build_cv_data
-from app.utils.custom_exceptions import ModelNotFoundException
+from app.utils.custom_exceptions import ObjectNotFoundException
 
 
 @api_controller("/cv", tags=["cv"], auth=JWTAuth(), permissions=[IsAuthenticated])
 class CvController(CvViewMixin, ShowCvControllerMixin):
     @route.post("/create", response=PrimaryCvSchema, url_name="Create CV")
     def create_cv(self, cv: PrimaryCvSchema):
-        try:
             cv = cv.create_cv(user_id=self.context.request.user.id)
-            # TODO Add output schema
-            return JsonResponse(
-                {"bio": cv.professional_summary, "title": cv.title}
-            )
-        except Exception as ex:
-            raise ex
+            return PrimaryCvSchema(title=cv.title, professional_summary=cv.professional_summary)
 
     @route.get("/{int:user_id}", response=CvRetrieveSchema, url_name="get-cv-detail")
     def retrieve_cv(self, user_id: int):
