@@ -51,7 +51,7 @@ class CvController(CvViewMixin, ShowCvControllerMixin):
         cv = self.get_object_or_exception(
             self.get_cv_queryset(user_id=user_id))
         if not cv:
-            raise ModelNotFoundException
+            raise ObjectNotFoundException
         response = build_cv_data(cv)
         return response
 
