@@ -6,6 +6,7 @@ from ninja_jwt.authentication import JWTAuth
 from app.mixins import CvViewMixin, ShowCvControllerMixin
 from app.schemas.cv import PrimaryCvSchema, CvRetrieveSchema, CvUpdateSchema, CvDraftSchema
 from app.services.cv_service import build_cv_data
+from app.utils.custom_exceptions import ModelNotFoundException
 
 
 @api_controller("/cv", tags=["cv"], auth=JWTAuth(), permissions=[IsAuthenticated])
@@ -55,6 +56,8 @@ class CvController(CvViewMixin, ShowCvControllerMixin):
     def show_cv(self, user_id: int):
         cv = self.get_object_or_exception(
             self.get_cv_queryset(user_id=user_id))
+        if not cv:
+            raise ModelNotFoundException
         response = build_cv_data(cv)
         return response
 

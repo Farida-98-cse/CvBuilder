@@ -6,6 +6,7 @@ from ninja_jwt.authentication import JWTAuth
 from app.mixins import SkillViewMixin
 from app.schemas.cv import CvRetrieveSchema
 from app.schemas.skill import SkillSchema
+from app.utils.custom_exceptions import ModelNotFoundException
 
 
 @api_controller("/skills", tags=["skill"], auth=JWTAuth(), permissions=[IsAuthenticated])
@@ -13,15 +14,14 @@ class SkillController(SkillViewMixin):
 
     @route.post("/create-skill", url_name="Define skills")
     def create_skill(self, skill: SkillSchema):
-        try:
-            cv = CvRetrieveSchema.get_cv(user_id=self.context.request.user.id)
-            skill = skill.create_skill(cv_id=cv.id)
-            # TODO Add output schema
-            return JsonResponse({
-                "name": skill.name
-            })
-        except Exception as ex:
-            raise ex
+        cv = CvRetrieveSchema.get_cv(user_id=self.context.request.user.id)
+        if not cv:
+             raise ModelNotFoundException
+        skill = skill.create_skill(cv_id=cv.id)
+        # TODO Add output schema
+        return JsonResponse({
+            "name": skill.name
+        })
 
     @route.delete(
         "/{int:skill_id}", url_name="destroy"

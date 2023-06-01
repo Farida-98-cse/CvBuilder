@@ -11,3 +11,5 @@ class ModelNotFoundException(APIException):
 class PasswordNotValidException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "The password that you entered is not valid.Please use stronger password."
+
+
