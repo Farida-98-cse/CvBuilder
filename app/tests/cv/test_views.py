@@ -14,9 +14,10 @@ class TestCVView:
         client = testing.TestClient(CvController)
         payload = dict(title="New cv", professional_experience="Some description")
         response = client.post(
-            str(CvController.create_cv), json=payload, headers=headers
+            f"cv/create", json=payload, headers=headers
         )
         assert response.status_code == status.HTTP_201_CREATED
         assert CV.objects.filter(
             name="New cv"
         ).first(), "Cv was not created"
+
