@@ -1,6 +1,8 @@
 import pytest
 from random import randint, random
 from django.test import Client
+
+from app.tests.cv.factories import CVFactory
 from app.tests.users.factories import UserFactory
 
 
@@ -37,3 +39,8 @@ def app_admin():
         is_superuser=True, is_staff=True, username="admin", email="admin@dmin.com"
     )
     return user
+
+
+@pytest.fixture
+def cv():
+    return CVFactory()
