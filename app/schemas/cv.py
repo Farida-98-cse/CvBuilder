@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, List
 
 from django.db import transaction
 from ninja import ModelSchema, Schema
@@ -49,38 +49,34 @@ class CvRetrieveSchema(ModelSchema):
         return CV.objects.filter(user_id=user_id).first()
 
 
-class UserSchema:
-    user_name: str
+class UserSchema(Schema):
+    username: str
     email: str
 
 
-class WorkExpSchema:
+class WorkExpSchema(Schema):
     company_name: str = None
     job_title: str = None
-    start_date: datetime = None
-    end_date: datetime = None
+    start_date: str = None
+    end_date: str = None
     description: str = None
 
 
-class EducationOutSchema:
+class EducationOutSchema(Schema):
     institution_name: str = None
     degree: str = None
-    start_date: datetime = None
-    end_date: datetime = None
+    start_date: str = None
+    end_date: str = None
     description: str = None
-
-
-class SkillOutSchema:
-    name: str
 
 
 class CvDraftSchema(Schema):
     user: UserSchema = None
     title: str = None
     professional_summary: str = None
-    work_experience: WorkExpSchema = None
-    education: EducationOutSchema = None
-    skills: SkillOutSchema = None
+    work_experience: List[WorkExpSchema] = None
+    education: List[EducationOutSchema] = None
+    skills: List[str] = None
 
     class Config:
         arbitrary_types_allowed = True

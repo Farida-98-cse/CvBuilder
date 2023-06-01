@@ -9,7 +9,7 @@ from app.models import WorkExperience
 class WorkSchema(ModelSchema):
     class Config:
         model = WorkExperience
-        include = ("company_name", "job_title", "start_date", "end_date", "description", "id")
+        include = ("company_name", "job_title", "start_date", "end_date", "description")
 
     @transaction.atomic
     def create_work_experience(self, **kwargs: Any):
