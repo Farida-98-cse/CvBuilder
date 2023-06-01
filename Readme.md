@@ -7,6 +7,7 @@ CV Builder is a web application that allows users to create and manage their pro
 - [Project Description](#project-description)
 - [Installation](#installation)
 - [API Documentation](#api-documentation)
+- [Testing](#testing)
 ## Project Description
 
 CV Builder simplifies the process of creating personalized CVs. Users can create an account, enter their details, and customize the content of their CVs.
@@ -35,3 +36,11 @@ For detailed API documentation, please refer to the [API Documentation](http://1
 The API documentation includes information on the available endpoints, request formats, response formats, and authentication requirements. It also provides example requests and responses for each endpoint.
 
 
+## Testing
+
+CV Builder includes a comprehensive test suite using pytest. To run the tests, follow these steps:
+
+1. Activate the virtual environment (if not already activated).
+2. Run pytest: `pytest`
+
+The test suite ensures that the application functions correctly and helps maintain code quality.
